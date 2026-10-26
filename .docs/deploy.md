@@ -37,6 +37,7 @@ cp .env.example .env   # или создать вручную по шаблон�
 - `DJANGO_SECRET_KEY` — длинная случайная строка, не дефолт из Django.
 - `DJANGO_ALLOWED_HOSTS` — IP VPS (и hostname, если есть), через запятую.
 - `CSRF_TRUSTED_ORIGINS=http://<VPS_IP>` — тот же origin, с которого открывают сайт и `/admin/`.
+- `WEB_PORT` — внешний порт nginx, по умолчанию `80`. Если 80 уже занят другим проектом, поставить свободный и добавить `:<порт>` в `CSRF_TRUSTED_ORIGINS`.
 
 5. Firewall: открыть `80` (HTTP) и SSH. Backend наружу не публикуется, только nginx на 80.
 6. После первого успешного workflow: `http://<VPS_IP>/`.

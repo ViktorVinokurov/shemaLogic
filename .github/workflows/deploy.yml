@@ -76,8 +76,13 @@ jobs:
           envs: IMAGE_TAG,GHCR_IMAGE,GHCR_USER,GHCR_TOKEN
           script: |
             set -eu
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             cd "${{ secrets.DEPLOY_PATH || '/opt/shemaLogic' }}"
+            if [ ! -f .env ]; then
+              echo "Нет .env в $(pwd) — создайте его по .env.example" >&2
+              exit 1
+            fi
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             docker compose -f docker-compose.prod.yml pull
+            docker logout ghcr.io
             docker compose -f docker-compose.prod.yml up -d
             docker image prune -f
