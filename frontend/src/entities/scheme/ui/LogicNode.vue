@@ -5,6 +5,7 @@ import type { Component } from 'vue'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
 import { BRANCH_SIDES, SIDE_LABEL, branchSlots, inputSlot, outcomeLabel, resolveBranches } from '../model/branches'
 import { definitionOf } from '../model/catalog'
+import { edgeToneColor } from '../model/palette'
 import { useSchemeStore } from '../model/store'
 import type { BranchId, BranchOutcome, BranchSide, LogicNodeData } from '../model/types'
 
@@ -13,7 +14,7 @@ const props = defineProps<NodeProps<LogicNodeData>>()
 defineOptions({ inheritAttrs: false })
 
 const store = useSchemeStore()
-const { updateNodeData, updateNodeInternals, removeNodes, getSelectedNodes } = useVueFlow()
+const { updateNodeData, updateNodeInternals, removeNodes, getSelectedNodes, getSelectedEdges } = useVueFlow()
 const isEditing = ref(false)
 const draft = ref('')
 const inputRef = useTemplateRef<HTMLInputElement>('labelInput')
@@ -24,6 +25,13 @@ const branches = computed(() => resolveBranches(props.data))
 const slots = computed(() => branchSlots(branches.value))
 const incomingSlot = computed(() => inputSlot(branches.value))
 const showBranchEditor = computed(() => props.selected && getSelectedNodes.value.length === 1)
+// Блок, в который ведёт выделенная линия, подсвечивается цветом этой линии.
+const incomingSelected = computed(() => getSelectedEdges.value.find((edge) => edge.target === props.id) ?? null)
+const targetStyle = computed(() => {
+  const edge = incomingSelected.value
+  if (!edge) return undefined
+  return { '--target-accent': edgeToneColor(store.edgeTones.get(edge.id) ?? 0) }
+})
 
 const sideIcons: Record<BranchSide, Component> = {
   top: ArrowUpIcon,
@@ -89,7 +97,8 @@ function remove() {
 <template>
   <div
     class="logic-node"
-    :class="[`logic-node--${data.kind}`, { 'is-selected': selected }]"
+    :class="[`logic-node--${data.kind}`, { 'is-selected': selected, 'is-edge-target': incomingSelected }]"
+    :style="targetStyle"
     :title="kindTitle"
   >
     <Handle
@@ -249,6 +258,34 @@ function remove() {
 
 .logic-node.is-selected .logic-node__shape {
   box-shadow: 0 0 0 3px color-mix(in oklch, var(--node-accent) 38%, transparent);
+}
+
+/* Подсветка включается, когда бегущая по линии подсветка доходит до блока (0.6 с). */
+.logic-node.is-edge-target .logic-node__shape {
+  border-color: var(--target-accent);
+  border-width: 2.5px;
+  box-shadow:
+    0 0 0 4px color-mix(in oklch, var(--target-accent) 35%, transparent),
+    0 0 22px color-mix(in oklch, var(--target-accent) 45%, transparent);
+  scale: 1.06;
+  animation: target-arrive 0.45s cubic-bezier(0.3, 0, 0.2, 1.4) 0.55s backwards;
+}
+
+@keyframes target-arrive {
+  0% {
+    scale: 1;
+    border-color: color-mix(in oklch, var(--node-accent) 78%, var(--border));
+    box-shadow: 0 0 0 0 transparent;
+  }
+  60% {
+    scale: 1.1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logic-node.is-edge-target .logic-node__shape {
+    animation: none;
+  }
 }
 
 .logic-node__content {

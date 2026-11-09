@@ -9,6 +9,7 @@ import {
 } from '../api/schemeApi'
 import { outcomeLabel, resolveBranches } from './branches'
 import { decorateEdge, snapshotGraph } from './graph'
+import { assignEdgeTones } from './palette'
 import type { BranchOutcome, BranchSide, SaveStatus, Scheme, SchemeEdge, SchemeNode } from './types'
 
 export const useSchemeStore = defineStore('scheme', () => {
@@ -25,6 +26,7 @@ export const useSchemeStore = defineStore('scheme', () => {
   const isHydrating = ref(false)
 
   const activeScheme = computed(() => schemes.value.find((scheme) => scheme.id === activeId.value) ?? null)
+  const edgeTones = computed(() => assignEdgeTones(edges.value))
 
   let generation = 0
   let lastSaved = ''
@@ -204,6 +206,7 @@ export const useSchemeStore = defineStore('scheme', () => {
     schemes,
     activeId,
     activeScheme,
+    edgeTones,
     nodes,
     edges,
     isListLoading,

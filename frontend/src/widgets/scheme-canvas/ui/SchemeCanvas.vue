@@ -142,6 +142,7 @@ function goHome() {
         :nodes-draggable="store.activeId != null"
         :elements-selectable="store.activeId != null"
         :edges-updatable="false"
+        :elevate-edges-on-select="true"
         :zoom-on-double-click="false"
         :delete-key-code="['Backspace', 'Delete']"
         :selection-key-code="'Shift'"

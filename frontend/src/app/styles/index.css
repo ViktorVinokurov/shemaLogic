@@ -141,6 +141,13 @@
   --edge: oklch(0.52 0.02 260);
   --edge-yes: oklch(0.55 0.15 155);
   --edge-no: oklch(0.58 0.19 25);
+  /* Палитра линий: одна светлота, умеренная насыщенность, оттенки разнесены по кругу. */
+  --edge-tone-1: oklch(0.55 0.15 255);
+  --edge-tone-2: oklch(0.6 0.15 65);
+  --edge-tone-3: oklch(0.54 0.17 305);
+  --edge-tone-4: oklch(0.57 0.1 200);
+  --edge-tone-5: oklch(0.56 0.18 350);
+  --edge-tone-6: oklch(0.56 0.12 110);
 }
 
 .dark {
@@ -152,6 +159,12 @@
   --edge: oklch(0.78 0.02 260);
   --edge-yes: oklch(0.8 0.14 155);
   --edge-no: oklch(0.76 0.15 25);
+  --edge-tone-1: oklch(0.74 0.13 255);
+  --edge-tone-2: oklch(0.79 0.13 70);
+  --edge-tone-3: oklch(0.74 0.14 305);
+  --edge-tone-4: oklch(0.78 0.1 200);
+  --edge-tone-5: oklch(0.75 0.15 350);
+  --edge-tone-6: oklch(0.8 0.13 110);
 }
 
 .vue-flow {

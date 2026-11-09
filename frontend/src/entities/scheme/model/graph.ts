@@ -1,4 +1,4 @@
-import { MarkerType, type Connection } from '@vue-flow/core'
+import type { Connection } from '@vue-flow/core'
 import { isBranchId, isBranchOutcome, outcomeLabel, resolveBranches } from './branches'
 import { definitionOf, isNodeKind } from './catalog'
 import type { BranchOutcome, LogicNodeData, NodeKind, SchemeEdge, SchemeGraph, SchemeNode } from './types'
@@ -20,24 +20,9 @@ export function createLogicNode(kind: NodeKind, position: { x: number; y: number
   }
 }
 
-export function edgeColor(outcome?: string | null): string {
-  if (outcome === 'yes') return 'var(--edge-yes)'
-  if (outcome === 'no') return 'var(--edge-no)'
-  return 'var(--edge)'
-}
-
+// Цвет, стрелку и подсветку рисует LabeledEdge: они зависят от всего графа и от выделения.
 export function decorateEdge(edge: SchemeEdge): SchemeEdge {
-  const color = edgeColor(edge.outcome ?? edge.sourceHandle)
-  return Object.assign({}, edge, {
-    type: 'labeled' as const,
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color,
-      width: 18,
-      height: 18,
-    },
-    style: { stroke: color, strokeWidth: 2 },
-  })
+  return Object.assign({}, edge, { type: 'labeled' as const })
 }
 
 export function canConnect(
